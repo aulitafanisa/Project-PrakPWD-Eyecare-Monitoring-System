@@ -43,20 +43,21 @@
             border-radius: 16px;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
             text-align: center;
-            width: 500px;
+            width: 600px;
             max-width: 90%;
         }
         .login-box h1 {
             color: #10367d;
             margin-bottom: 25px;
+            font-weight: bold;
         }
 
-        .form-group {
+        .form {
             text-align: left;
             margin-bottom: 25px;
         }
 
-        .form-label {
+        .form label {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
@@ -76,7 +77,7 @@
             color: white;
             border: none;
             padding: 12px;
-            width: 100%;
+            width: 35%;
             border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
@@ -107,13 +108,13 @@
     <div class="login-box">
         <h1>EyeCare</h1>
         <form method="POST" action="">
-            <div class= "mb-3">
-                <label class="form-label">Username</label>
-                <input type="text" class="form-login" name="username" required>
+            <div class= "form mb-3">
+                <label>Username</label>
+                <input type="text" name="username" class="form-login" required>
             </div>
-            <div class= "mb-3">
-                <label class="form-label">Password</label>
-                <input type="password" class="form-login" name="password" required>
+            <div class= "form mb-3">
+                <label>Password</label>
+                <input type="password" name="password" class="form-login" required>
             </div>
             <a href="dashboard.php" class="btn btn-login">Login</a>
         </form>
