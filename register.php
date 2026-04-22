@@ -12,7 +12,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     if(mysqli_num_rows($cek) > 0){
         echo "<script>alert('Username atau Email sudah digunakan.'); window.location.href='register.php';</script>";
     }else{
-        $sql = "INSERT INTO user (nama_lengkap,username, email, tanggal_lahir, password) VALUES ('$nama', '$username', '$email', '$tgl', '$password')";
+        $sql = "INSERT INTO user (nama_lengkap, email, tgl_lahir, username, `password`) VALUES ('$nama', '$email', '$tgl', '$username', '$password')";
         $query = mysqli_query($conn, $sql);
         if($query){
             echo "<script>alert('Akun EyeCare berhasil dibuat');window.location.href='login.php';</script>";
@@ -97,7 +97,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     <div class="box">
         <h2>EyeCare</h2>
         <p class="text-center">Buat akun baru</p>
-        <form method="POST">
+        <form method="POST" action="">
             <div class="form mb-2">
                 <label>Nama Lengkap</label>
                 <input type="text" name="nama_lengkap" class="form-input" required>
@@ -108,7 +108,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
             </div>
              <div class="form mb-2">
                 <label>Tanggal Lahir</label>
-                <input type="date" name="tanggal_lahir" class="form-input" required>
+                <input type="date" name="tgl_lahir" class="form-input" required>
             </div>
             <div class="form mb-2">
                 <label>E-mail</label>
@@ -118,7 +118,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
                 <label>Password</label>
                 <input type="password" name="password" class="form-input" required>
             </div>
-            <a href="login.php" class="btn btn-custom">Daftar</a>
+            <button type="submit" class="btn btn-custom">Daftar</button>
         </form>
     </div>
 
