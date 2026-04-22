@@ -1,12 +1,12 @@
 <?php
-    $host = "localhost";
-    $user = "root";
+    $hostname = "localhost";
+    $username = "root";
     $password = "";
-    $db = "eyecare_db";
+    $database = "eyecare_db";
 
-    $conn = mysqli_connect($host, $user, $password, $db);
+    $conn = new mysqli($hostname, $username, $password, $database);
 
-    if(!$conn){
-        die("Koneksi ke database gagal: ". mysqli_connect_error());
+    if($conn->connect_error){
+        die("Koneksi gagal: ". $conn->connect_error);
     }
 ?>
