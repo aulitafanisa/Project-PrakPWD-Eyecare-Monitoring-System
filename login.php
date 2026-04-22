@@ -2,17 +2,17 @@
     session_start();
     include 'koneksi.php';
 
-    if($_SERVER['REQUEST_METHOD']== 'POST'){
+    if($_SERVER['REQUEST_METHOD'] == 'POST'){
         $username = $_POST['username'];
         $password = $_POST['password'];
 
-        $sql = mysqli_query($conn, "SELECT * FROM user WHERE username = '$username' AND password = '$password'");
+        $sql = mysqli_query($conn, "SELECT * FROM user WHERE username = '$username' AND `password` = '$password'");
         if(mysqli_num_rows($sql) > 0){
             $user = mysqli_fetch_assoc($sql);
             $_SESSION['id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['nama_lengkap'] = $user['nama_lengkap'];
-            header("location: dashbord.php");
+            header("location: dashboard.php");
             exit();
         } else {
             echo"<script>alert('Username atau Password Salah.'); window.location='login.php';</script>";
@@ -116,7 +116,7 @@
                 <label>Password</label>
                 <input type="password" name="password" class="form-login" required>
             </div>
-            <a href="dashboard.php" class="btn btn-login">Login</a>
+            <button type="submit" class="btn-login">Login</button>
         </form>
         <p class="text-center mt-3 small">Belum punya akun?<a href="register.php" style="color: #10367d; text-decoration:none; font-weight:bold;">Daftar</a></p>
     </div>
