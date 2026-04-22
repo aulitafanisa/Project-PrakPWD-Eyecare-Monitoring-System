@@ -260,7 +260,7 @@
                         <img src="assets/time-icon.png" class="icon-img" alt="Time Icon">
                         <h4 class="feature-title">Tracking Screen Time</h4>
                         <p class="text-muted small">Monitor seberapa lama Anda menatap layar secara real-time dengan laporan mingguan yang mendalam.</p>
-                        <a href="#" class="link-more mt-auto">Pelajari Detail →</a>
+                        <a href="#" class="link-more mt-auto">Mulai Track</a>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -268,7 +268,7 @@
                         <img src="assets/eye-icon.png" class="icon-img" alt="Eye Icon">
                         <h4 class="feature-title">Analisis Kesehatan</h4>
                         <p class="text-muted small">Dapatkan skor kesehatan mata instan berdasarkan keluhan harian dan intensitas cahaya layar Anda.</p>
-                        <a href="#" class="link-more mt-auto">Cek Sekarang →</a>
+                        <a href="#" class="link-more mt-auto">Cek Sekarang</a>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -276,7 +276,7 @@
                         <img src="assets/calender-icon.jpg" class="icon-img" alt="Calendar Icon">
                         <h4 class="feature-title">Riwayat Harian</h4>
                         <p class="text-muted small">Simpan setiap perkembangan kesehatan mata Anda untuk konsultasi medis yang lebih akurat di masa depan.</p>
-                        <a href="#" class="link-more mt-auto">Buka Kalender →</a>
+                        <a href="#" class="link-more mt-auto">Cek History</a>
                     </div>
                 </div>
             </div>
