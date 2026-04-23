@@ -10,7 +10,7 @@ if (!isset($_SESSION['id'])){
 $id_user = $_SESSION['id'];
 $nama = $_SESSION['nama_lengkap'];
 
-$cek_sesi = mysqli_query($conn,"SELECT waltu_mulai FROM screentime WHERE id_user = $id_user AND status = 'berjalan' LIMIT 1");
+$cek_sesi = mysqli_query($conn,"SELECT waktu_mulai FROM screentime WHERE id_user = $id_user AND status = 'berjalan' LIMIT 1");
 $sesi = mysqli_fetch_assoc($cek_sesi);
 
 $waktu_mulai_js = 0;
@@ -55,35 +55,51 @@ if ($sesi) {
 
             <form action="hasil.php" method="POST">
                 <input type="hidden" name="durasi_detik" id="input_detik" value="0">
-                <button type="submit" id="stopBtn" class="btn btn-stop" disabled>SELESAI</button>
+                <button type="submit" id="stopBtn" class="btn btn-stop" <?= $sesi ? '' : 'disabled' ?>>SELESAI</button>
             </form>
         </div>
         <p style="margin-top: 20px; color: #666;">Klik 'Selesai' untuk melihat hasil.</p>
     </div>
-    <script>
+   <script>
         let timer;
-        let seconds = <?= $waktu_mulai_js ?>; 
+        let seconds = <?= (int)$waktu_mulai_js ?>; 
         let isRunning = <?= $sesi ? 'true' : 'false' ?>;
 
         function updateDisplay(){
             let hrs = Math.floor(seconds/3600);
             let mins = Math.floor((seconds % 3600)/ 60);
             let secs = seconds % 60;
-            document.getElementById('display-timer').innerText = (hrs < 10 ? "0"+hrs : hrs) + ":" + (mins < 10 ? "0"+mins : mins) + ":" + (secs < 10 ? "0" +secs : secs);
-            document.getElementById('input_detik').values = seconds;
+            
+            document.getElementById('display-timer').innerText = 
+                (hrs < 10 ? "0"+hrs : hrs) + ":" + 
+                (mins < 10 ? "0"+mins : mins) + ":" + 
+                (secs < 10 ? "0" +secs : secs);
+            
+            document.getElementById('input_detik').value = seconds;
+            
+            if(seconds > 0){
+                document.getElementById('stopBtn').disabled = false;
+                document.getElementById('startBtn').disabled = true;
             }
-            if (isRunning){
-                startTimer(true);
+        }
+        function startTimer(isResume = false){
+            if(!isResume){
+                window.location.href = "proses_timer.php?action=start";
+                return;
             }
-            function startTimer(isResume = false){
-                if(!isResume){
-                    window.location.href = "proses.timer.php?action=start";
-                    return;
-             }
+            if (timer) clearInterval(timer);
+            
             timer = setInterval(() => {
-                 seconds++;
-                 updateDisplay();
-             }, 1000);
+                seconds++;
+                updateDisplay();
+            }, 1000);
+        }
+
+        if (isRunning) {
+            updateDisplay();
+            startTimer(true); 
+        } else if (seconds > 0) {
+            updateDisplay(); 
         }
     </script>
    
