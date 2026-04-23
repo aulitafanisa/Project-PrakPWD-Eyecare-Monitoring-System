@@ -9,12 +9,16 @@ if (!isset($_SESSION['id'])){
 
 $id_user = $_SESSION['id'];
 $nama = $_SESSION['nama_lengkap'];
-$today = date('yyyy-mm-dd');
-$query_today = mysqli_query($conn, "SELECT SUM(durasi_menit) as total FROM screentime WHERE id_user = $id_user AND tanggal ='$today'");
 
-$data_today = mysqli_fetch_assoc($query_today);
-$total_menit = $data_today['total'] ?? 0;
+$cek_sesi = mysqli_query($conn,"SELECT waltu_mulai FROM screentime WHERE id_user = $id_user AND status = 'berjalan' LIMIT 1");
+$sesi = mysqli_fetch_assoc($cek_sesi);
 
+$waktu_mulai_js = 0;
+if ($sesi) {
+    $mulai = strtotime($sesi['waktu_mulai']);
+    $sekarang = time();
+    $waktu_mulai_js = $sekarang - $mulai;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -58,26 +62,28 @@ $total_menit = $data_today['total'] ?? 0;
     </div>
     <script>
         let timer;
-        let seconds = 0;
-        let isRunning = false;
+        let seconds = <?= $waktu_mulai_js ?>; 
+        let isRunning = <?= $sesi ? 'true' : 'false' ?>;
 
-        function startTimer(){
-            if(!isRunning){
-                isRunning = true;
-                document.getElementById('startBtn').disabled = true;
-                document.getElementById('stopBtn').disabled = false;
-            
-                timer = setInterval(() => {
-                    seconds++;
-                    let hrs = Math.floor(seconds/3600);
-                    let mins = Math.floor((seconds % 3600)/ 60);
-                    let secs = seconds % 60;
-
-                    document.getElementById('display-timer').innerText = (hrs < 10 ? "0"+hrs : hrs) + ":" + (mins < 10 ? "0"+mins : mins) + ":" + (secs < 10 ? "0" +secs : secs);
-
-                    document.getElementById('input_detik').values = seconds;
-                }, 1000);
+        function updateDisplay(){
+            let hrs = Math.floor(seconds/3600);
+            let mins = Math.floor((seconds % 3600)/ 60);
+            let secs = seconds % 60;
+            document.getElementById('display-timer').innerText = (hrs < 10 ? "0"+hrs : hrs) + ":" + (mins < 10 ? "0"+mins : mins) + ":" + (secs < 10 ? "0" +secs : secs);
+            document.getElementById('input_detik').values = seconds;
             }
+            if (isRunning){
+                startTimer(true);
+            }
+            function startTimer(isResume = false){
+                if(!isResume){
+                    window.location.href = "proses.timer.php?action=start";
+                    return;
+             }
+            timer = setInterval(() => {
+                 seconds++;
+                 updateDisplay();
+             }, 1000);
         }
     </script>
    
