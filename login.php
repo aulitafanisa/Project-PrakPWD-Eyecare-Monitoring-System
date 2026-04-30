@@ -1,23 +1,34 @@
 <?php
-    session_start();
-    include 'koneksi.php';
+session_start();
+include 'koneksi.php';
 
-    if($_SERVER['REQUEST_METHOD'] == 'POST'){
-        $username = $_POST['username'];
-        $password = $_POST['password'];
+if($_SERVER['REQUEST_METHOD'] == 'POST'){
+    $username = $_POST['username'];
+    $password = $_POST['password'];
 
-        $sql = mysqli_query($conn, "SELECT * FROM user WHERE username = '$username' AND `password` = '$password'");
-        if(mysqli_num_rows($sql) > 0){
-            $user = mysqli_fetch_assoc($sql);
-            $_SESSION['id'] = $user['id'];
-            $_SESSION['username'] = $user['username'];
-            $_SESSION['nama_lengkap'] = $user['nama_lengkap'];
-            header("location: dashboard.php");
-            exit();
+    $sql = mysqli_query($conn, "SELECT * FROM user WHERE username = '$username' AND `password` = '$password'");
+    if(mysqli_num_rows($sql) > 0){
+        $user = mysqli_fetch_assoc($sql);
+        $_SESSION['id'] = $user['id'];
+        $_SESSION['username'] = $user['username'];
+        $_SESSION['nama_lengkap'] = $user['nama_lengkap'];
+
+        $id_user = $user['id'];
+        $query_profil = mysqli_query($conn, "SELECT id_profile FROM profiles WHERE id_user = $id_user");
+        $jumlah_profil = mysqli_num_rows($query_profil);
+
+        if ($jumlah_profil == 1) {
+            $data_profil = mysqli_fetch_assoc($query_profil);
+            $_SESSION['id_profile'] = $data_profil['id_profile'];
+            header("location: Landing.php");
         } else {
-            echo"<script>alert('Username atau Password Salah.'); window.location='login.php';</script>";
+            header("location: pilih_profile.php");
         }
+        exit();
+    } else {
+        echo"<script>alert('Username atau Password Salah.'); window.location='login.php';</script>";
     }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
