@@ -13,16 +13,20 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         echo "<script>alert('Username atau Email sudah digunakan.'); window.location.href='register.php';</script>";
     }else{
         $sql = "INSERT INTO user (nama_lengkap, email, tgl_lahir, username, `password`) VALUES ('$nama', '$email', '$tgl', '$username', '$password')";
-        $query = mysqli_query($conn, $sql);
-        if($query){
-            echo "<script>alert('Akun EyeCare berhasil dibuat');window.location.href='login.php';</script>";
+        if(mysqli_query($conn, $sql)){
+            $id_user_baru = mysqli_insert_id($conn);
+            $sql_profile = "INSERT INTO profiles (id_user, nama_profil, tanggal_lahir) VALUES ('$id_user_baru', '$nama', '$tgl')";
+            
+            if(mysqli_query($conn, $sql_profile)){
+                echo "<script>alert('Akun EyeCare berhasil dibuat');window.location.href='login.php';</script>";
+            }else{
+                echo "<script>alert('Gagal membuat profil otomatis');window.location.href='register.php'</script>";
+            }
         }else{
             echo "<script>alert('Terjadi kesalahan saat mendaftar');window.location.href='register.php'</script>";
         }
     }
-
-}
-
+ }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -42,55 +46,52 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
             justify-content: center;
             align-items: center;
             padding:20px;
-        }
-
-        .box {
-            text-align: center;
-            background-color: white;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-            width: 600px;
-            max-width: 90%;
-        }
-
-        .box h2 {
-            color: #10367d;
-            text-align: center;
-            font-weight: bold;
-        }
-
-        .form {
-            margin-bottom: 12px;
-        }
-
-        .form label {
-            text-align: left;
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 10px;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-        }
-
-        .btn {
-            background-color: #10367d;
-            color: white;
-            border: none;
-            padding: 12px;
-            width: 50%;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 15px;
-            box-shadow: 0 4px 12px rgba(10, 7, 42, 0.3);
-        }
+            }
+            .box {
+                text-align: center;
+                background-color: white;
+                padding: 30px;
+                border-radius: 16px;
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+                width: 600px;
+                max-width: 90%;
+            }
+            .box h2 {
+                color: #10367d;
+                font-weight: bold;
+            }
+            .form {
+                margin-bottom: 12px;
+                text-align: left;
+            }
+            .form label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: bold;
+            }
+            .form-input {
+                width: 100%;
+                padding: 10px;
+                box-sizing: border-box;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+            }
+            .btn-custom {
+                background-color: #10367d;
+                color: white;
+                border: none;
+                padding: 12px;
+                width: 100%;
+                border-radius: 8px;
+                font-weight: bold;
+                cursor: pointer;
+                margin-top: 15px;
+                box-shadow: 0 4px 12px rgba(10, 7, 42, 0.3);
+            }
+            .btn-custom:hover {
+                background-color: #0d2a63;
+                color: white;
+            }
     </style>
 </head>
 <body>
