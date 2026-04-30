@@ -20,7 +20,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
         if ($jumlah_profil == 1) {
             $data_profil = mysqli_fetch_assoc($query_profil);
             $_SESSION['id_profile'] = $data_profil['id_profile'];
-            header("location: Landing.php");
+            header("location: dashboard.php");
         } else {
             header("location: pilih_profile.php");
         }
