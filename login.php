@@ -1,22 +1,18 @@
 <?php
 session_start();
 include 'koneksi.php';
-
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $username = $_POST['username'];
     $password = $_POST['password'];
-
     $sql = mysqli_query($conn, "SELECT * FROM user WHERE username = '$username' AND `password` = '$password'");
     if(mysqli_num_rows($sql) > 0){
         $user = mysqli_fetch_assoc($sql);
         $_SESSION['id'] = $user['id'];
         $_SESSION['username'] = $user['username'];
         $_SESSION['nama_lengkap'] = $user['nama_lengkap'];
-
         $id_user = $user['id'];
         $query_profil = mysqli_query($conn, "SELECT id_profile FROM profiles WHERE id_user = $id_user");
         $jumlah_profil = mysqli_num_rows($query_profil);
-
         if ($jumlah_profil == 1) {
             $data_profil = mysqli_fetch_assoc($query_profil);
             $_SESSION['id_profile'] = $data_profil['id_profile'];
@@ -62,18 +58,15 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
             margin-bottom: 25px;
             font-weight: bold;
         }
-
         .form {
             text-align: left;
             margin-bottom: 25px;
         }
-
         .form label {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
         }
-
         .form-login {
             width: 100%;
             padding: 10px;
@@ -82,7 +75,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
             border-radius: 8px;
             font-family: 'Poppins';
         }
-
         .btn-login {
             background-color: #10367d;
             color: white;
@@ -94,20 +86,16 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
             cursor: pointer;
             margin-top: 10px;
             box-shadow: 0 4px 12px rgba(10, 7, 42, 0.3);
-            
         }
-
         .btn-login:hover {
             background-color: white;
             color: #10367d;
             border-radius: 8px;
         }
-
         .text-center {
             margin-top: 20px;
             font-size: 14px;
         }
-
         .text-center a {
             color: #10367d;
             text-decoration: none;
@@ -131,7 +119,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
         </form>
         <p class="text-center mt-3 small">Belum punya akun?<a href="register.php" style="color: #10367d; text-decoration:none; font-weight:bold;">Daftar</a></p>
     </div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 </html>

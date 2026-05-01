@@ -4,19 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EyeCare - Jaga Kesehatan Mata</title>
-    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap">
-
     <style> 
-
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #ffffff;
             color: #333;
             overflow-x: hidden;
         }
-
         .navbar {
             background-color: #10367d !important;
             padding: 18px 0;
@@ -34,18 +30,15 @@
         }
         .nav-link:hover { color: white !important; opacity: 1; }
         .nav-link.active { font-weight: 700; border-bottom: 2px solid white; color: white !important; }
-
         .hero {
             padding: 120px 0;
             background-color: #ffffff;
             position: relative;
         }
-        
         .container-wide {
             max-width: 90%;
             margin: 0 auto;
         }
-
         .hero-top {
             color: #10367d;
             font-weight: 600;
@@ -64,13 +57,11 @@
             color: #74b4da;
             font-style: italic;
         }
-
         .img-container {
             position: relative;
             display: inline-block;
             z-index: 1;
         }
-        
         .img-container::before {
             content: "";
             position: absolute;
@@ -81,7 +72,6 @@
             left: -15%;
             z-index: -1;
         }
-
         .img-blob {
             width: 100%;
             max-width: 520px;
@@ -91,8 +81,6 @@
             position: relative;
             z-index: 2;
         }
-
-  
         .glass-card {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(10px);
@@ -106,12 +94,10 @@
         }
         .card-score { bottom: 15%; left: -30px; border-left: 5px solid #10367d; }
         .card-alert { top: 15%; right: -20px; border-left: 5px solid #10367d; animation-delay: 1s; }
-
         @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-15px); }
         }
-
         .btn-dark-blue {
             background-color: #10367d;
             color: white;
@@ -122,7 +108,6 @@
             transition: 0.3s;
         }
         .btn-dark-blue:hover { background-color: #0a2556; transform: translateY(-3px); color: white; }
-
         .btn-outline-custom {
             border: 2px solid #10367d;
             color: #10367d;
@@ -132,7 +117,6 @@
             transition: 0.3s;
         }
         .btn-outline-custom:hover { background: #10367d; color: white; }
-
         .features {
             background-color: #ebebeb; 
             padding: 100px 0;
@@ -158,7 +142,6 @@
             margin-bottom: 30px;
             object-fit: contain;
         }
-
         .about {
             padding: 120px 0;
         }
@@ -173,7 +156,6 @@
     </style>
 </head>
 <body>
-
     <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container-fluid px-lg-5">
             <a class="navbar-brand d-flex align-items-center" href="#">
@@ -196,7 +178,6 @@
             </div>
         </div>
     </nav>
-
     <header class="hero">
         <div class="container-wide">
             <div class="row align-items-center">
@@ -204,18 +185,15 @@
                     <p class="hero-top">Pantau • Analisis • Jaga</p>
                     <h1>Jaga Kesehatan <br>Mata Anda <span>Setiap Hari</span></h1>
                     <p class="text-muted fs-5 mb-5 pe-lg-5">EyeCare membantu Anda memantau screen time harian, menganalisis kondisi mata berdasarkan riwayat, serta memberikan solusi cerdas untuk penglihatan yang lebih tajam.</p>
-                    
                     <div class="d-flex gap-3">
                         <button class="btn btn-dark-blue shadow-lg">Mulai Sekarang</button>
                         <button class="btn btn-outline-custom">Pelajari Lebih Lanjut</button>
                     </div>
-                    
                     <div class="mt-5 d-flex align-items-center gap-2 text-muted small">
                         <span style="color: #74b4da; font-size: 1.2rem;">✔</span> 
                         Data kesehatan Anda dienkripsi secara aman dan pribadi.
                     </div>
                 </div>
-
                 <div class="col-lg-6 text-center mt-5 mt-lg-0">
                     <div class="img-container">
                         <div class="glass-card card-score d-none d-md-block">
@@ -227,9 +205,7 @@
                                 </div>
                             </div>
                         </div>
-
                         <img src="assets/eye.jpg" alt="Eye Health" class="img-blob">
-                        
                         <div class="glass-card card-alert d-none d-md-block">
                             <div class="d-flex align-items-center gap-2">
                                 <span style="font-size: 1.2rem;">🔔</span>
@@ -241,7 +217,6 @@
             </div>
         </div>
     </header>
-
     <section class="features">
         <div class="container-wide">
             <div class="row mb-5 align-items-end">
@@ -253,7 +228,6 @@
                     <p class="text-muted">Gunakan berbagai alat kami untuk menjaga produktivitas <br> tanpa mengorbankan kesehatan mata.</p>
                 </div>
             </div>
-            
             <div class="row g-4">
                 <div class="col-md-4">
                     <div class="card card-feature">
@@ -282,7 +256,6 @@
             </div>
         </div>
     </section>
-
     <section class="about">
         <div class="container-wide">
             <div class="row align-items-center">
@@ -291,7 +264,6 @@
                         <p class="fw-bold small text-uppercase mb-2" style="color: #74b4da;">Tentang EyeCare</p>
                         <h2 class="fw-bold display-6 mb-4" style="color: #10367d;">Kesehatan Mata Adalah <br>Investasi Masa Depan</h2>
                         <p class="text-muted fs-5">Kami mengerti bahwa di dunia modern, layar adalah bagian dari hidup. Misi kami adalah menjadi asisten pribadi yang memastikan mata Anda tetap sehat meski bekerja berjam-jam.</p>
-                        
                         <div class="row mt-5">
                             <div class="col-sm-6 mb-4">
                                 <div class="d-flex align-items-center gap-3">
@@ -316,7 +288,6 @@
             </div>
         </div>
     </section>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 </html>

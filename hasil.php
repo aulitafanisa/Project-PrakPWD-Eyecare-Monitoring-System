@@ -1,7 +1,6 @@
 <?php
 session_start();
 include 'koneksi.php';
-
 if (!isset($_SESSION['id'])) {
     header("location: login.php");
     exit();
@@ -13,7 +12,6 @@ $jam    = floor($durasi_detik / 3600);
 $menit  = floor(($durasi_detik % 3600) / 60);
 $detik  = $durasi_detik % 60;
 $format_waktu = sprintf('%02d:%02d:%02d', $jam, $menit, $detik);
-
 if ($durasi_detik > 2) {
     $query_update = "UPDATE screentime SET 
                      durasi_menit = $durasi_menit, 
@@ -21,21 +19,18 @@ if ($durasi_detik > 2) {
                      WHERE id_user = $id_user AND status = 'berjalan'";
     mysqli_query($conn, $query_update);
 } else {
-    //ini kalo durasi dibawah 2 detik(in case kepencet) ga akan masuk database
+    
     mysqli_query($conn, "DELETE FROM screentime WHERE id_user = $id_user AND status = 'berjalan'");
 }
-
 $query_user = mysqli_query($conn, "SELECT tgl_lahir FROM user WHERE id = $id_user");
 $data_user = mysqli_fetch_assoc($query_user);
 $tgl_lahir = new DateTime($data_user['tgl_lahir']);
 $sekarang = new DateTime();
 $umur = $sekarang->diff($tgl_lahir)->y;
-
-//(rreferensi: Kompas Tekno & KMU)
+//(rreferensi: Kompast tekno & KMU)
 $batas_aman = 120; 
 $kategori_umur = "Dewasa";
 $saran_kesehatan = "Gunakan metode 20-20-20: Tiap 20 menit, lihat benda sejauh 20 kaki selama 20 detik.";
-
 if ($umur < 2) {
     $batas_aman = 5;
     $kategori_umur = "Balita (Di bawah 2 tahun)";
@@ -54,7 +49,6 @@ if ($durasi_menit <= $batas_aman) {
     $saran_kesehatan = "<b>Mata Anda lelah!</b> Segera istirahatkan mata minimal 15 menit dan lihat objek hijau di luar ruangan.";
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -86,28 +80,22 @@ if ($durasi_menit <= $batas_aman) {
     </style>
 </head>
 <body>
-
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-7 result-card">
             <h2 class="mb-2">Hasil Monitoring Mata</h2>
             <p class="text-muted">Kategori: <?= $kategori_umur ?></p>
             <hr>
-            
             <p class="mb-1">Total Durasi Penggunaan Layar:</p>
             <div class="duration-display">
                 <?= $format_waktu ?>
             </div>
-
             <h3 class="<?= $warna_status ?> mt-4"><?= $pesan ?></h3>
-            
             <div class="alert alert-info mt-4 text-start">
                 <strong>Saran Kesehatan:</strong><br>
                 <?= $saran_kesehatan ?>
             </div>
-
             <p class="text-muted small mt-3">Sumber: Kompas Tekno & Klinik Mata Utama (KMU)</p>
-
             <div class="mt-4">
                 <a href="dashboard.php" class="btn btn-primary px-4 py-2">Kembali ke Dashboard</a>
                 <a href="riwayat.php" class="btn btn-outline-secondary px-4 py-2">Lihat Riwayat</a>
@@ -115,7 +103,6 @@ if ($durasi_menit <= $batas_aman) {
         </div>
     </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 </html>

@@ -9,24 +9,32 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     $password = $_POST['password'];
 
     $cek = mysqli_query($conn, "SELECT * FROM user WHERE username ='$username' OR email = '$email'");
+    
     if(mysqli_num_rows($cek) > 0){
         echo "<script>alert('Username atau Email sudah digunakan.'); window.location.href='register.php';</script>";
     }else{
-        $sql = "INSERT INTO user (nama_lengkap, email, tgl_lahir, username, `password`) VALUES ('$nama', '$email', '$tgl', '$username', '$password')";
+        $sql = "INSERT INTO user (nama_lengkap, email, tgl_lahir, username, `password`) 
+                VALUES ('$nama', '$email', '$tgl', '$username', '$password')";
+
         if(mysqli_query($conn, $sql)){
             $id_user_baru = mysqli_insert_id($conn);
-            $sql_profile = "INSERT INTO profiles (id_user, nama_profil, tanggal_lahir) VALUES ('$id_user_baru', '$nama', '$tgl')";
+            $angka_random = rand(1, 10);
+            $foto_random = "pict" . $angka_random . ".jpg";
+
+            $sql_profile = "INSERT INTO profiles (id_user, nama_profil, tanggal_lahir, foto) 
+                            VALUES ('$id_user_baru', '$nama', '$tgl', '$foto_random')";
             
             if(mysqli_query($conn, $sql_profile)){
-                echo "<script>alert('Akun EyeCare berhasil dibuat');window.location.href='login.php';</script>";
+                echo "<script>alert('Akun EyeCare berhasil dibuat!');window.location.href='login.php';</script>";
             }else{
+
                 echo "<script>alert('Gagal membuat profil otomatis');window.location.href='register.php'</script>";
             }
         }else{
             echo "<script>alert('Terjadi kesalahan saat mendaftar');window.location.href='register.php'</script>";
         }
     }
- }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -34,7 +42,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EyeCare - Registrasi</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap">
     <style>
          body {
@@ -122,7 +130,6 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
             <button type="submit" class="btn btn-custom">Daftar</button>
         </form>
     </div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 </html>
