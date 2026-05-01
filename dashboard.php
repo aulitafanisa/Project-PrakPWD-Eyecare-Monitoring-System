@@ -30,6 +30,44 @@ if ($sesi) {
     $sekarang = time();
     $waktu_mulai_js = $sekarang - $mulai;
 }
+
+if ($id_profile_aktif == 0) {
+    $q_max = mysqli_query($conn, "SELECT MAX(durasi_menit) as maksimal FROM screentime 
+        WHERE id_user = $id_user AND (id_profile IS NULL OR id_profile = 0)");
+} else {
+    $q_max = mysqli_query($conn, "SELECT MAX(durasi_menit) as maksimal FROM screentime 
+        WHERE id_profile = $id_profile_aktif");
+}
+$data_max = mysqli_fetch_assoc($q_max);
+$sesi_detik = $data_max['maksimal'] ?? 0;
+$menit_terlama = floor($sesi_detik / 60);
+
+if ($id_profile_aktif == 0) {
+    $q_hari_ini = mysqli_query($conn, "SELECT SUM(durasi_menit) as total FROM screentime 
+        WHERE id_user = $id_user AND (id_profile IS NULL OR id_profile = 0) AND DATE(waktu_mulai) = CURDATE()");
+} else {
+    $q_hari_ini = mysqli_query($conn, "SELECT SUM(durasi_menit) as total FROM screentime 
+        WHERE id_profile = $id_profile_aktif AND DATE(waktu_mulai) = CURDATE()");
+}
+$data_hari_ini = mysqli_fetch_assoc($q_hari_ini);
+$total_hari_ini = $data_hari_ini['total'] ?? 0;
+
+$kuota = 18000; 
+$skor_kesehatan = 100;
+if ($total_hari_ini > 0) {
+    $skor_kesehatan = max(0, round((( $kuota - $total_hari_ini ) / $kuota) * 100));
+}
+
+if ($skor_kesehatan >= 80) {
+    $kondisi_mata = "Sangat Baik";
+    $warna_mata = "text-success";
+} elseif ($skor_kesehatan >= 50) {
+    $kondisi_mata = "Lelah";
+    $warna_mata = "text-warning";
+} else {
+    $kondisi_mata = "Bahaya";
+    $warna_mata = "text-danger";
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -237,7 +275,7 @@ if ($sesi) {
                         <div class="icon-box bg-blue">👁️</div>
                         <div>
                             <div style="font-size: 0.85rem; color: #6c757d;">Kondisi Mata</div>
-                            <div class="fw-bold">Normal</div>
+                            <h5 class="<?= $warna_mata ?>"><?= $kondisi_mata ?></h5>
                         </div>
                     </div>
                 </div>
@@ -246,7 +284,7 @@ if ($sesi) {
                         <div class="icon-box bg-green">⏱️</div>
                         <div>
                             <div style="font-size: 0.85rem; color: #6c757d;">Sesi Terlama</div>
-                            <div class="fw-bold">45 Menit</div>
+                            <h5><?= $menit_terlama ?> <small>Menit</small></h5>
                         </div>
                     </div>
                 </div>
@@ -255,7 +293,7 @@ if ($sesi) {
                         <div class="icon-box bg-orange">🛡️</div>
                         <div>
                             <div style="font-size: 0.85rem; color: #6c757d;">Skor Kesehatan</div>
-                            <div class="fw-bold">92/100</div>
+                            <h5 class="<?= $warna_mata ?>"><?= $skor_kesehatan ?>%</h5>
                         </div>
                     </div>
                 </div>
