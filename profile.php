@@ -1,45 +1,66 @@
 <?php
 session_start();
 include 'koneksi.php';
+
 if (!isset($_SESSION['id'])) {
     header("location: login.php");
     exit();
 }
-$id_user = $_SESSION['id'];
+
+$id_user = (int)$_SESSION['id'];
+
 $query_user = mysqli_query($conn, "SELECT * FROM user WHERE id = $id_user");
 $user = mysqli_fetch_assoc($query_user);
+
+$nama_file_foto = !empty($user['foto']) ? $user['foto'] : 'pict1.jpg';
 
 $query_min_id = mysqli_query($conn, "SELECT MIN(id_profile) as id_utama FROM profiles WHERE id_user = $id_user");
 $res_min = mysqli_fetch_assoc($query_min_id);
 $id_utama = $res_min['id_utama'];
 
-$query_profiles = mysqli_query($conn, "SELECT * FROM profiles WHERE id_user = $id_user AND id_profile != $id_utama");
-
-$id_profile_aktif = isset($_SESSION['id_profile']) ? $_SESSION['id_profile'] : 0;
-$query_aktif = mysqli_query($conn, "SELECT * FROM profiles WHERE id_profile = $id_profile_aktif");
-$data_profil_aktif = mysqli_fetch_assoc($query_aktif);
-
-$nama_tampil = $data_profil_aktif ? $data_profil_aktif['nama_profil'] : $user['nama_lengkap'];
-$foto_tampil = ($data_profil_aktif && $data_profil_aktif['foto']) ? $data_profil_aktif['foto'] : 'pict1.jpg';
+if (!isset($_SESSION['id_profile']) || $_SESSION['id_profile'] == 0) {
+    $_SESSION['id_profile'] = $id_utama;
+}
 
 if (isset($_GET['switch'])) {
-    $_SESSION['id_profile'] = $_GET['switch'];
-    header("location: dashboard.php");
+    $id_target = (int)$_GET['switch'];
+    $cek_milik = mysqli_query($conn, "SELECT id_profile FROM profiles WHERE id_profile = $id_target AND id_user = $id_user");
+    if (mysqli_num_rows($cek_milik) > 0) {
+        $_SESSION['id_profile'] = $id_target;
+    }
+    header("location: profile.php");
     exit();
 }
 
 if (isset($_GET['switch_main'])) {
-    unset($_SESSION['id_profile']); 
-    header("location: profile.php"); 
+    $_SESSION['id_profile'] = $id_utama;
+    header("location: profile.php");
     exit();
 }
 
 if (isset($_GET['hapus_id'])) {
     $id_hapus = (int)$_GET['hapus_id'];
-    mysqli_query($conn, "DELETE FROM profiles WHERE id_profile = $id_hapus AND id_user = $id_user");
-    $_SESSION['info_hapus'] = "berhasil";
+    if ($id_hapus != $id_utama) {
+        mysqli_query($conn, "DELETE FROM profiles WHERE id_profile = $id_hapus AND id_user = $id_user");
+        if ($_SESSION['id_profile'] == $id_hapus) {
+            $_SESSION['id_profile'] = $id_utama;
+        }
+        $_SESSION['info_hapus'] = "berhasil";
+    }
     header("location: profile.php");
     exit();
+}
+
+$id_profile_aktif = $_SESSION['id_profile'];
+$query_aktif = mysqli_query($conn, "SELECT * FROM profiles WHERE id_profile = $id_profile_aktif AND id_user = $id_user");
+$data_profil_aktif = mysqli_fetch_assoc($query_aktif);
+
+if ($data_profil_aktif) {
+    $nama_tampil = $data_profil_aktif['nama_profil'];
+    $foto_tampil = $data_profil_aktif['foto'] ? $data_profil_aktif['foto'] : 'pict1.jpg';
+} else {
+    $nama_tampil = $user['nama_lengkap'];
+    $foto_tampil = 'pict1.jpg';
 }
 ?>
 <!DOCTYPE html>
@@ -328,7 +349,6 @@ if (isset($_GET['hapus_id'])) {
         <a href="logout.php" style="margin-top: 50px; color: #ffbcbc;">Keluar</a>
     </div>
 
-     
     <div class="main">
         <div class="top-nav">
             <div class="nav-left">
@@ -341,112 +361,91 @@ if (isset($_GET['hapus_id'])) {
             </div>
         </div>
 
-        <div class="profile-header text-center">
-        <div class="container">
-            <h3>Profil & Pengguna</h3>
-            <p>Kelola profil dan siapa yang sedang menggunakan device</p>
-        </div>
-        </div>
+        <div class="container mt-4 content-wrapper">
+            <div class="profile-header text-center">
+                <h3>Profil & Pengguna</h3>
+                <p>Kelola profil dan siapa yang sedang menggunakan device</p>
+            </div>
 
-        <div class="container mt-4">
             <div class="row justify-content-center">
                 <div class="col-md-10 col-lg-8">
-                    
-                    <div class="card-utama p-4 mb-4" style="margin-top: -30px;">
+                    <div class="card-utama">
                         <h5>Profile Utama</h5>
-                        <?php if (!isset($_SESSION['id_profile']) || $_SESSION['id_profile'] == 0): ?>
-                            <span class="badge-active">
-                                <i class="bi bi-patch-check-fill"></i> SEDANG AKTIF
-                            </span>
+                        <?php if ($_SESSION['id_profile'] == $id_utama): ?>
+                            <span class="badge-active mb-3"><i class="bi bi-patch-check-fill"></i> SEDANG AKTIF</span>
                         <?php endif; ?>
-                         
                         <hr>
-                        <img src="assets/pict1.jpg" class="profile-img">
-                        <div class="container" style="max-width: 400px;">
-                            <div class="row mb-3 text-start">
+                        <img src="assets/<?= $nama_file_foto ?>" class="profile-img" onerror="this.src='assets/pict1.jpg'">
+                        <div class="mx-auto" style="max-width: 400px;">
+                            <div class="row mb-2 text-start">
                                 <div class="col-5 info-label">Nama Lengkap <span>:</span></div>
-                                <div class="col-7 info-value"><?= $user['nama_lengkap']; ?></div>
+                                <div class="col-7 info-value"><?= htmlspecialchars($user['nama_lengkap']); ?></div>
                             </div>
-                            <div class="row mb-3 text-start">
+                            <div class="row mb-2 text-start">
                                 <div class="col-5 info-label">Username <span>:</span></div>
-                                <div class="col-7 info-value"><?= $user['username']; ?></div>
+                                <div class="col-7 info-value"><?= htmlspecialchars($user['username']); ?></div>
                             </div>
-                            <div class="row mb-3 text-start">
+                            <div class="row mb-4 text-start">
                                 <div class="col-5 info-label">E-mail <span>:</span></div>
-                                <div class="col-7 info-value"><?= $user['email']; ?></div>
+                                <div class="col-7 info-value"><?= htmlspecialchars($user['email']); ?></div>
                             </div>
-                            <div class="row mb-3 text-start">
-                                <div class="col-5 info-label">Tanggal Lahir <span>:</span></div>
-                                <div class="col-7 info-value"><?= $user['tgl_lahir']; ?></div>
-                            </div>
-                             <a href="edit_user.php" class="btn-edit-akun">Edit Profile Utama</a>
-                            <div class=" justify-content-center">
-                                <?php if(isset($_SESSION['id_profile']) && $_SESSION['id_profile'] != 0): ?>
-                                    <a href="?switch_main=true" class="btn btn-use">
-                                        <i class="bi bi-person-check"></i> Gunakan Akun Utama
-                                    </a>
-                                <?php endif; ?>
-                            </div>
-                            
+                            <a href="edit_user.php" class="btn-edit-akun">Edit Profile Utama</a>
+                            <?php if($_SESSION['id_profile'] != $id_utama): ?>
+                                <div class="mt-3">
+                                    <a href="?switch_main=true" class="btn-switch py-2 px-3">Gunakan Akun Utama</a>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
 
-                    <div class="card p-4">
-                        <h5 class="fw-bold mb-4">Daftar Pengguna</h5>
+                    <div class="card">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="fw-bold m-0">Daftar Pengguna Tambahan</h5>
+                            <a href="tambah_profile.php" class="btn btn-add btn-sm">+ Tambah</a>
+                        </div>
                         <div class="list-group list-group-flush">
                             <?php 
-                            // Logika ID Utama
-                            $q_min = mysqli_query($conn, "SELECT MIN(id_profile) as id_utama FROM profiles WHERE id_user = $id_user");
-                            $id_utama = mysqli_fetch_assoc($q_min)['id_utama'];
-
-                            // Query list keluarga (selain akun utama)
                             $query_profiles = mysqli_query($conn, "SELECT * FROM profiles WHERE id_user = $id_user AND id_profile != $id_utama");
-
                             if(mysqli_num_rows($query_profiles) > 0): 
                                 while($p = mysqli_fetch_assoc($query_profiles)): 
+                                    $tgl = new DateTime($p['tanggal_lahir']);
+                                    $umur = $tgl->diff(new DateTime('today'))->y;
                             ?>
-                                 
                                 <div class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
                                     <div class="d-flex align-items-center">
                                         <img src="assets/<?= $p['foto']; ?>" class="profile-img-list" onerror="this.src='assets/pict1.jpg'">
                                         <div>
                                             <h6 class="mb-0 fw-bold"><?= htmlspecialchars($p['nama_profil']); ?></h6>
-                                            <small class="text-muted">Lahir: <?= $p['tanggal_lahir']; ?></small>
+                                            <small class="text-muted">Umur : <?= $umur; ?> Tahun</small>
                                         </div>
                                     </div>
                                     <div class="d-flex align-items-center">
                                         <a href="edit_profile.php?id=<?= $p['id_profile']; ?>" class="btn-edit">Edit</a>
-                                        <button onclick="confirmHapus(<?= $p['id_profile']; ?>, '<?= $p['nama_profil']; ?>')" class="btn-delete">Hapus</button>
-                                        
+                                        <button onclick="confirmHapus(<?= $p['id_profile']; ?>, '<?= addslashes($p['nama_profil']); ?>')" class="btn-delete">Hapus</button>
                                         <div class="ms-3">
-                                            <?php if(isset($_SESSION['id_profile']) && $_SESSION['id_profile'] == $p['id_profile']): ?>
+                                            <?php if($_SESSION['id_profile'] == $p['id_profile']): ?>
                                                 <span class="badge-active">AKTIF</span>
                                             <?php else: ?>
-                                                <a href="?switch=<?= $p['id_profile']; ?>" class="btn btn-switch">Gunakan</a>
+                                                <a href="?switch=<?= $p['id_profile']; ?>" class="btn-switch">Gunakan</a>
                                             <?php endif; ?>
                                         </div>
                                     </div>
-                                   
                                 </div>
-                            <?php 
-                                endwhile; 
-                            else: 
-                            ?>
-                                <p class="text-center text-muted py-3">Belum ada anggota keluarga lain.</p>
+                            <?php endwhile; else: ?>
+                                <p class="text-center text-muted py-3">Belum ada pengguna tambahan.</p>
                             <?php endif; ?>
                         </div>
                     </div>
 
                     <div class="text-center mt-4 mb-5">
-                        <a href="dashboard.php" class="btn-back">Kembali ke Dashboard</a>
+                        <a href="dashboard.php" class="btn btn-outline-primary px-4">Kembali ke Dashboard</a>
                     </div>
                 </div>
             </div>
-            </div>
-             <footer>
-                 <div class="text-secondary">© 2026 EyeCare, Inc</div>
-             </footer>
         </div>
+        <footer>
+            <div class="text-secondary">© 2026 EyeCare, Inc</div>
+        </footer>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -468,7 +467,7 @@ if (isset($_GET['hapus_id'])) {
                 cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = "?hapus_id=" + id;
+                    window.location.href = "profile.php?hapus_id=" + id;
                 }
             })
         }
