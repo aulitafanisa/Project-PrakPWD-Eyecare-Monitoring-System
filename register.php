@@ -17,13 +17,22 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
                 VALUES ('$nama', '$email', '$tgl', '$username', '$password')";
 
         if(mysqli_query($conn, $sql)){
-            $id_user_baru = mysqli_insert_id($conn);
-            $angka_random = rand(1, 10);
-            $foto_random = "pict" . $angka_random . ".jpg";
+    $id_user_baru = mysqli_insert_id($conn);
 
-            $sql_profile = "INSERT INTO profiles (id_user, nama_profil, tanggal_lahir, foto) 
-                            VALUES ('$id_user_baru', '$nama', '$tgl', '$foto_random')";
-            
+    $angka_random = rand(1, 10);
+    $foto_random = "pict" . $angka_random . ".jpg";
+    $sql_update_user = "UPDATE user SET foto = '$foto_random' WHERE id = $id_user_baru";
+    mysqli_query($conn, $sql_update_user);
+
+    $sql_profile = "INSERT INTO profiles (id_user, nama_profil, tanggal_lahir, foto) 
+                    VALUES ('$id_user_baru', '$nama', '$tgl', '$foto_random')";
+    
+    if(mysqli_query($conn, $sql_profile)){
+        header("location: login.php");
+        exit();
+    }
+
+    mysqli_query($conn, $sql_profile);
             if(mysqli_query($conn, $sql_profile)){
                 echo "<script>alert('Akun EyeCare berhasil dibuat!');window.location.href='login.php';</script>";
             }else{
