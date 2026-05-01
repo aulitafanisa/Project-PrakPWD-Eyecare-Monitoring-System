@@ -27,7 +27,6 @@ $data_user = mysqli_fetch_assoc($query_user);
 $tgl_lahir = new DateTime($data_user['tgl_lahir']);
 $sekarang = new DateTime();
 $umur = $sekarang->diff($tgl_lahir)->y;
-//(rreferensi: Kompast tekno & KMU)
 $batas_aman = 120; 
 $kategori_umur = "Dewasa";
 $saran_kesehatan = "Gunakan metode 20-20-20: Tiap 20 menit, lihat benda sejauh 20 kaki selama 20 detik.";
