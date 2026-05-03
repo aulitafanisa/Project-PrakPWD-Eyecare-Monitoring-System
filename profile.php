@@ -196,6 +196,34 @@ if ($data_profil_aktif) {
 
         .card-utama, .card {
             border-radius: 15px;
+            border: 2px solid transparent;
+            background: linear-gradient(white, white) padding-box,
+                        linear-gradient(135deg, #10367d, #00d4ff) border-box; /* Border gradasi */
+            box-shadow: 0 10px 20px rgba(16, 54, 125, 0.15);
+            position: relative;
+            margin-bottom: 20px;
+            padding: 25px;
+            overflow: hidden;
+        }
+
+        .card-utama { text-align: center; }
+
+        .card-utama::after {
+            content: "MAIN";
+            position: absolute;
+            top: 10px;
+            right: -20px;
+            background: #10367d;
+            color: white;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 5px 30px;
+            transform: rotate(45deg);
+        }
+
+
+        .card-pengguna-aktif, .card {
+            border-radius: 15px;
             border: none;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             margin-bottom: 20px;
@@ -203,7 +231,7 @@ if ($data_profil_aktif) {
             padding: 25px;
         }
 
-        .card-utama { text-align: center; }
+        .card-pengguna-aktif { text-align: center; }
 
         .profile-img {
             width: 200px; height: 200px;
@@ -267,7 +295,7 @@ if ($data_profil_aktif) {
             font-weight: 600;
             font-size: 12px;
             border-radius: 8px;
-            padding: 5px 15px;
+            padding: 5px 24px;
             text-decoration: none;
         }
 
@@ -411,6 +439,43 @@ if ($data_profil_aktif) {
                             <?php endif; ?>
                         </div>
                     </div>
+               
+                    <div class="card-pengguna-aktif">
+                        <h5>Profile Pengguna Aktif</h5>
+                        <span class="badge-active mb-3"><i class="bi bi-patch-check-fill"></i> SEDANG AKTIF</span>
+                         <div class="ms-3">
+                            <hr>
+                            <img src="assets/<?= $foto_tampil ?>" class="profile-img" onerror="this.src='assets/pict1.jpg'">
+                            <div class="row mb-2 text-start">
+                                <div class="col-5 info-label">Nama Pengguna <span>:</span></div>
+                                <div class="col-7 info-value"><?= htmlspecialchars($nama_tampil) ?></div>
+                            </div>
+                            <div class="row mb-2 text-start">
+                                <div class="col-5 info-label">Tanggal Lahir <span>:</span></div>
+                                <div class="col-7 info-value"><?= date('d F Y', strtotime($data_profil_aktif['tanggal_lahir'])); ?></div>
+                            </div>
+                            <div class="row mb-2 text-start">
+                                <div class="col-5 info-label">Umur <span>:</span></div>
+                                <div class="col-7 info-value">
+                                    <?php 
+                                        $tgl_lahir = new DateTime($user['tgl_lahir']);
+                                        $sekarang = new DateTime('today');
+                                        echo $tgl_lahir->diff($sekarang)->y . " Tahun";
+                                    ?>
+                                </div>
+                            </div>
+                            <?php
+                            if ($_SESSION['id_profile'] == $id_utama) {
+            $link_edit = "edit_user.php"; 
+        } else {
+            $link_edit = "edit_profile.php?id=" . $_SESSION['id_profile']; 
+        }
+        ?>
+
+        <a href="<?= $link_edit ?>" class="btn-edit-akun">Edit Profile Pengguna</a>
+                        </div>
+                     </div>
+                    
 
                     <div class="card">
                         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -438,7 +503,7 @@ if ($data_profil_aktif) {
                                         <button onclick="confirmHapus(<?= $p['id_profile']; ?>, '<?= addslashes($p['nama_profil']); ?>')" class="btn-delete">Hapus</button>
                                         <div class="ms-3">
                                             <?php if($_SESSION['id_profile'] == $p['id_profile']): ?>
-                                                <span class="badge-active">AKTIF</span>
+                                                <span class="badge-active">SEDANG AKTIF</span>
                                             <?php else: ?>
                                                 <a href="?switch=<?= $p['id_profile']; ?>" class="btn-switch">Gunakan</a>
                                             <?php endif; ?>
