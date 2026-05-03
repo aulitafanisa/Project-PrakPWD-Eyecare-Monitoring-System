@@ -75,6 +75,10 @@ if ($id_profile_aktif == $id_utama) {
         $foto_tampil = !empty($user['foto']) ? $user['foto'] : 'pict1.jpg';
     }
 }
+
+$tanggal_lahir = new DateTime($data_profil_aktif['tanggal_lahir']);
+$hari_ini = new DateTime('today');
+$umur = $hari_ini->diff($tanggal_lahir)->y;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -323,6 +327,18 @@ if ($id_profile_aktif == $id_utama) {
             margin-right: 5px;
         }
 
+        .btn-edit-pAktif {
+            background-color: #ffc107;
+            color: #000000;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 6px;
+            padding: 10px 50px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 15px;
+        }
+
         .btn-delete {
             background-color: #dc3545;
             color: white;
@@ -434,16 +450,7 @@ if ($id_profile_aktif == $id_utama) {
                                 <div class="col-5 info-label">Tanggal Lahir <span>:</span></div>
                                 <div class="col-7 info-value"><?= date('d F Y', strtotime($user['tgl_lahir'])); ?></div>
                             </div>
-                            <div class="row mb-2 text-start">
-                                <div class="col-5 info-label">Umur <span>:</span></div>
-                                <div class="col-7 info-value">
-                                    <?php 
-                                        $tgl_lahir = new DateTime($user['tgl_lahir']);
-                                        $sekarang = new DateTime('today');
-                                        echo $tgl_lahir->diff($sekarang)->y . " Tahun";
-                                    ?>
-                                </div>
-                            </div>
+    
                             <a href="edit_user.php" class="btn-edit-akun">Edit Profile Utama</a>
                             <?php if($_SESSION['id_profile'] != $id_utama): ?>
                                 <div class="mt-3">
@@ -467,25 +474,19 @@ if ($id_profile_aktif == $id_utama) {
                                 <div class="col-5 info-label">Tanggal Lahir <span>:</span></div>
                                 <div class="col-7 info-value"><?= date('d F Y', strtotime($data_profil_aktif['tanggal_lahir'])); ?></div>
                             </div>
-                            <div class="row mb-2 text-start">
-                                <div class="col-5 info-label">Umur <span>:</span></div>
-                                <div class="col-7 info-value">
-                                    <?php 
-                                        $tgl_lahir = new DateTime($user['tgl_lahir']);
-                                        $sekarang = new DateTime('today');
-                                        echo $tgl_lahir->diff($sekarang)->y . " Tahun";
-                                    ?>
-                                </div>
+                             <div class="row mb-2 text-start">
+                                <div class="col-5 info-label">Umur <span class="float-end">:</span></div>
+                                <div class="col-7 info-value"><?= $umur ?> Tahun</div>
                             </div>
+
                             <?php
                             if ($_SESSION['id_profile'] == $id_utama) {
-            $link_edit = "edit_user.php"; 
-        } else {
-            $link_edit = "edit_profile.php?id=" . $_SESSION['id_profile']; 
-        }
-        ?>
-
-        <a href="<?= $link_edit ?>" class="btn-edit-akun">Edit Profile Pengguna</a>
+                                $link_edit = "edit_user.php"; 
+                            } else {
+                                $link_edit = "edit_profile.php?id=" . $_SESSION['id_profile']; 
+                            }
+                            ?>
+                            <a href="<?= $link_edit ?>" class="btn-edit-pAktif">Edit</a>
                         </div>
                      </div>
                     

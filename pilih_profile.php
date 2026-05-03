@@ -1,12 +1,23 @@
 <?php
 session_start();
 include 'koneksi.php';
+
 if (!isset($_SESSION['id'])) {
     header("location: login.php");
     exit();
 }
+
 $id_user = $_SESSION['id'];
-$query = mysqli_query($conn, "SELECT * FROM profiles WHERE id_user = $id_user");
+
+$query_user = mysqli_query($conn, "SELECT * FROM user WHERE id = $id_user");
+$user = mysqli_fetch_assoc($query_user);
+
+$query_min = mysqli_query($conn, "SELECT MIN(id_profile) as id_utama FROM profiles WHERE id_user = $id_user");
+$res_min = mysqli_fetch_assoc($query_min);
+$id_utama = $res_min['id_utama'];
+
+$query_profiles = mysqli_query($conn, "SELECT * FROM profiles WHERE id_user = $id_user");
+
 if (isset($_GET['pilih'])) {
     $_SESSION['id_profile'] = $_GET['pilih'];
     header("location: dashboard.php");
@@ -82,15 +93,28 @@ if (isset($_GET['pilih'])) {
     <div class="text-center">
         <h2 class="mb-5 fw-bold">Siapa yang menggunakan layar?</h2>
         <div class="d-flex justify-content-center flex-wrap">
-            <?php while($row = mysqli_fetch_assoc($query)): ?>
+            
+            <?php while($row = mysqli_fetch_assoc($query_profiles)): 
+                if ($row['id_profile'] == $id_utama) {
+                    $display_name = $user['nama_lengkap'];
+                    $display_photo = !empty($user['foto']) ? $user['foto'] : 'pict1.jpg';
+                } else {
+                    $display_name = $row['nama_profil'];
+                    $display_photo = !empty($row['foto']) ? $row['foto'] : 'pict1.jpg';
+                }
+            ?>
                 <a href="?pilih=<?= $row['id_profile']; ?>" class="profile-card">
-                    <img src="assets/<?= $row['foto']; ?>" 
+                    <img src="assets/<?= $display_photo; ?>" 
                          alt="Profile" 
                          class="profile-img" 
                          onerror="this.src='assets/pict1.jpg'">
-                    <h6 class="fw-bold m-0"><?= htmlspecialchars($row['nama_profil']); ?></h6>
+                    <h6 class="fw-bold m-0"><?= htmlspecialchars($display_name); ?></h6>
+                    <?php if($row['id_profile'] == $id_utama): ?>
+                        <small style="font-size: 0.7rem; opacity: 0.8;">Akun Utama</small>
+                    <?php endif; ?>
                 </a>
             <?php endwhile; ?>
+
         </div>
         <div class="mt-5">
             <a href="tambah_profile.php" class="add-btn">+ Tambah Profil</a>
