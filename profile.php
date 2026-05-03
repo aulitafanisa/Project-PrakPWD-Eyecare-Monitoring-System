@@ -385,9 +385,23 @@ if ($data_profil_aktif) {
                                 <div class="col-5 info-label">Username <span>:</span></div>
                                 <div class="col-7 info-value"><?= htmlspecialchars($user['username']); ?></div>
                             </div>
-                            <div class="row mb-4 text-start">
+                            <div class="row mb-2 text-start">
                                 <div class="col-5 info-label">E-mail <span>:</span></div>
                                 <div class="col-7 info-value"><?= htmlspecialchars($user['email']); ?></div>
+                            </div>
+                            <div class="row mb-2 text-start">
+                                <div class="col-5 info-label">Tanggal Lahir <span>:</span></div>
+                                <div class="col-7 info-value"><?= date('d F Y', strtotime($user['tgl_lahir'])); ?></div>
+                            </div>
+                            <div class="row mb-2 text-start">
+                                <div class="col-5 info-label">Umur <span>:</span></div>
+                                <div class="col-7 info-value">
+                                    <?php 
+                                        $tgl_lahir = new DateTime($user['tgl_lahir']);
+                                        $sekarang = new DateTime('today');
+                                        echo $tgl_lahir->diff($sekarang)->y . " Tahun";
+                                    ?>
+                                </div>
                             </div>
                             <a href="edit_user.php" class="btn-edit-akun">Edit Profile Utama</a>
                             <?php if($_SESSION['id_profile'] != $id_utama): ?>
