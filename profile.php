@@ -52,15 +52,28 @@ if (isset($_GET['hapus_id'])) {
 }
 
 $id_profile_aktif = $_SESSION['id_profile'];
-$query_aktif = mysqli_query($conn, "SELECT * FROM profiles WHERE id_profile = $id_profile_aktif AND id_user = $id_user");
-$data_profil_aktif = mysqli_fetch_assoc($query_aktif);
 
-if ($data_profil_aktif) {
-    $nama_tampil = $data_profil_aktif['nama_profil'];
-    $foto_tampil = $data_profil_aktif['foto'] ? $data_profil_aktif['foto'] : 'pict1.jpg';
-} else {
+if ($id_profile_aktif == $id_utama) {
     $nama_tampil = $user['nama_lengkap'];
-    $foto_tampil = 'pict1.jpg';
+    $foto_tampil = !empty($user['foto']) ? $user['foto'] : 'pict1.jpg';
+    $tgl_lahir_tampil = $user['tgl_lahir'];
+    
+    $data_profil_aktif = [
+        'nama_profil' => $nama_tampil,
+        'tanggal_lahir' => $tgl_lahir_tampil,
+        'foto' => $foto_tampil
+    ];
+} else {
+    $query_aktif = mysqli_query($conn, "SELECT * FROM profiles WHERE id_profile = $id_profile_aktif AND id_user = $id_user");
+    $data_profil_aktif = mysqli_fetch_assoc($query_aktif);
+
+    if ($data_profil_aktif) {
+        $nama_tampil = $data_profil_aktif['nama_profil'];
+        $foto_tampil = !empty($data_profil_aktif['foto']) ? $data_profil_aktif['foto'] : 'pict1.jpg';
+    } else {
+        $nama_tampil = $user['nama_lengkap'];
+        $foto_tampil = !empty($user['foto']) ? $user['foto'] : 'pict1.jpg';
+    }
 }
 ?>
 <!DOCTYPE html>

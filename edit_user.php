@@ -33,6 +33,7 @@ if (isset($_POST['update'])) {
 
         if ($update) {
             $_SESSION['nama_lengkap'] = $nama;
+            $_SESSION['foto'] = $foto;
             $success = true;
         }
     }
