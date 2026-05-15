@@ -2,16 +2,21 @@
 include 'koneksi.php';
 
 if($_SERVER['REQUEST_METHOD'] === 'POST'){
-    $nama = $_POST['nama_lengkap'];
-    $email = $_POST['email'];
+    $nama = trim($_POST['nama_lengkap']);
+    $email = trim($_POST['email']);
     $tgl = $_POST['tgl_lahir'];
-    $username = $_POST['username'];
+    $username = trim($_POST['username']);
     $password = $_POST['password'];
 
-if($nama === "" || $username === "" || $password === ""){
-    echo "<script>alert('Pendaftaran gagal: Semua kolom harus diisi dan tidak boleh hanya spasi!'); window.history.back();</script>";
+    if($nama === "" || $username === "" || $password === "" || $email === ""){
+        echo "<script>alert('Pendaftaran gagal: Semua kolom harus diisi dan tidak boleh hanya spasi!'); window.history.back();</script>";
         exit();
-}
+    }
+
+    if (preg_match('/\s/', $username)) {
+        echo "<script>alert('Pendaftaran gagal: Username tidak boleh mengandung spasi!'); window.history.back();</script>";
+        exit();
+    }
 
     $cek = mysqli_query($conn, "SELECT * FROM user WHERE username ='$username' OR email = '$email'");
     if(mysqli_num_rows($cek) > 0){
@@ -25,9 +30,7 @@ if($nama === "" || $username === "" || $password === ""){
             echo "<script>alert('Terjadi kesalahan saat mendaftar');window.location.href='register.php'</script>";
         }
     }
-
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
