@@ -1,5 +1,7 @@
-EyeCare - Sistem Pemantauan Kesehatan Mata & Screen Time
-Project Akhir Praktikum Pemrograman Web & Basis Data
+**EyeCare - Sistem Pemantauan Kesehatan Mata & Screen Time**
+
+**Project Akhir Praktikum Pemrograman Web & Basis Data*
+
 oleh:
 
 Aulita Fanisa Ardila/124250067
@@ -8,7 +10,7 @@ Charisya Prameswari Alviantika/124250068
 
 Program ini dibuat untuk membantu pengguna menjaga kesehatan mata dari risiko Computer Vision Syndrome (CVS) akibat paparan radiasi layar (screen time) yang berlebihan, dengan menerapkan sistem pelacakan waktu nyata dan kuesioner skrining kesehatan yang terintegrasi dengan basis data.
 
-Fitur / Menu:
+**Fitur / Menu:**
 
 1.Halaman Utama (Landing Page): Informasi awal mengenai fungsionalitas aplikasi dan navigasi utama.
 
@@ -28,7 +30,7 @@ Fitur / Menu:
 
 9.Konfirmasi Keluar (Logout Security): Jendela pop-up pengaman (SweetAlert2) untuk mengakhiri sesi dan mengamankan integritas data medis.
 
-Logic Dasar:
+**Logic Dasar:**
 
 Arsitektur Sistem: Menggunakan arsitektur Full-Stack Web berbasis PHP untuk logika server dan Bootstrap untuk antarmuka pengguna yang responsif.
 
@@ -36,7 +38,7 @@ Manajemen Sesi & Autentikasi: Menggunakan PHP Session untuk mengontrol hak akses
 
 Sistem Basis Data: Menggunakan MySQL sebagai penyimpanan permanen. Saat sesi pelacakan atau cek kesehatan selesai, data otomatis di-insert ke database dan di-load kembali secara dinamis dalam bentuk grafik dan tabel riwayat.
 
-Kelebihan:
+**Kelebihan:**
 
 Interaktif & Edukatif: Dilengkapi pengingat aktivitas sehat (instruksi berkedip/istirahat) selama pelacakan aktif.
 
