@@ -1,4 +1,5 @@
 <?php
+session_start();
 include 'koneksi.php';
 
 if($_SERVER['REQUEST_METHOD'] === 'POST'){
@@ -7,6 +8,18 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     $tgl = $_POST['tgl_lahir'];
     $username = $_POST['username'];
     $password = $_POST['password'];
+
+    if (empty(trim($nama_lengkap)) || empty(trim($username)) || empty(trim($password))) {
+        echo "<script>
+                alert('Nama, Username, dan Password tidak boleh hanya berisi spasi!');
+                window.history.back();
+              </script>";
+        exit();
+    }
+
+    $nama_fix = trim($nama_lengkap);
+    $user_fix = trim($username);
+    $pass_fix = password_hash(trim($password), PASSWORD_DEFAULT);
 
     $cek = mysqli_query($conn, "SELECT * FROM user WHERE username ='$username' OR email = '$email'");
     

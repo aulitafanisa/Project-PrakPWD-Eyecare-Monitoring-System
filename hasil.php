@@ -34,7 +34,7 @@ if ($umur < 2) {
     $batas_aman = 5;
     $kategori_umur = "Balita (Di bawah 2 tahun)";
     $saran_kesehatan = "Sangat tidak disarankan terpapar layar selain untuk video call keluarga.";
-} elseif ($umur >= 2 && $umur <= 5) {
+} elseif ($umur >= 2 && $umur <= 12) {
     $batas_aman = 60;
     $kategori_umur = "Anak-anak (2-5 tahun)";
     $saran_kesehatan = "Maksimal 1 jam per hari. Pastikan konten bersifat edukatif.";
