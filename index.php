@@ -365,31 +365,35 @@
     </section>
 
    <div class="container" id="footer">
-    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
-        
-        <div class="col-md-4 d-flex align-items-center">
-            <span class="mb-3 mb-md-0 text-body-secondary">© 2026 EyeCare, Inc</span>
-        </div>
+    <footer id="contact" class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+    <div class="col-md-4 d-flex align-items-center">
+        <span class="mb-3 mb-md-0 text-body-secondary">© 2026 EyeCare, Inc</span>
+    </div>
 
-        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
-            <li class="ms-3">
-                <a class="text-body-secondary" href="#" aria-label="Instagram">
-                    <i class="bi bi-instagram fs-5"></i>
-                </a>
-            </li>
-            <li class="ms-3">
-                <a class="text-body-secondary" href="#" aria-label="Facebook">
-                    <i class="bi bi-facebook fs-5"></i>
-                </a>
-            </li>
-            <li class="ms-3">
-                <a class="text-body-secondary" href="#" aria-label="Twitter">
-                    <i class="bi bi-twitter-x fs-5"></i>
-                </a>
-            </li>
-        </ul>
-        
-    </footer>
+    <div class="col-md-4 d-flex justify-content-center align-items-center">
+        <a href="https://wa.me/6281234567890" class="text-decoration-none text-body-secondary">
+            <i class="bi bi-whatsapp me-2"></i>+62 812-3456-7890
+        </a>
+    </div>
+
+    <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+        <li class="ms-3">
+            <a class="text-body-secondary" href="#" aria-label="Instagram">
+                <i class="bi bi-instagram fs-5"></i>
+            </a>
+        </li>
+        <li class="ms-3">
+            <a class="text-body-secondary" href="#" aria-label="Facebook">
+                <i class="bi bi-facebook fs-5"></i>
+            </a>
+        </li>
+        <li class="ms-3">
+            <a class="text-body-secondary" href="#" aria-label="Twitter">
+                <i class="bi bi-twitter-x fs-5"></i>
+            </a>
+        </li>
+    </ul>
+</footer>
 </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>

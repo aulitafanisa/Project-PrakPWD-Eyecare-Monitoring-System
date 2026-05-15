@@ -1,14 +1,18 @@
 <?php
 session_start();
+date_default_timezone_set('Asia/Jakarta');
 include 'koneksi.php';
 
 if (!isset($_SESSION['id'])) {
     header("location: login.php");
     exit();
 }
+
 $id_user = $_SESSION['id'];
+mysqli_query($conn, "SET time_zone = '+07:00'");
 $durasi_detik = isset($_POST['durasi_detik']) ? (int)$_POST['durasi_detik'] : 0;
 $durasi_menit = ceil($durasi_detik / 60); 
+
 $jam    = floor($durasi_detik / 3600);
 $menit  = floor(($durasi_detik % 3600) / 60);
 $detik  = $durasi_detik % 60;
@@ -18,174 +22,96 @@ if ($durasi_detik > 2) {
     $query_update = "UPDATE screentime SET 
                      durasi_menit = $durasi_menit, 
                      status = 'selesai' 
-                     WHERE id_user = $id_user AND status = 'berjalan'";
+                     WHERE id_user = $id_user AND status = 'berjalan'
+                     ORDER BY waktu_mulai DESC LIMIT 1";
     mysqli_query($conn, $query_update);
 } else {
-    //ini kalo durasi dibawah 2 detik (in case kepencet) ga akan masuk database
     mysqli_query($conn, "DELETE FROM screentime WHERE id_user = $id_user AND status = 'berjalan'");
 }
 
-$query_user = mysqli_query($conn, "SELECT tgl_lahir FROM user WHERE id = $id_user");
-$data_user = mysqli_fetch_assoc($query_user);
-$tgl_lahir = new DateTime($data_user['tgl_lahir']);
-$sekarang = new DateTime();
-$umur = $sekarang->diff($tgl_lahir)->y;
+$batas_ideal = 120; 
+$batas_maksimal = 240;
 
-//(referensi: Kompas Tekno & KMU)
-$batas_aman = 120; 
-$kategori_umur = "Dewasa";
-$saran_kesehatan = "Gunakan metode 20-20-20: Tiap 20 menit, lihat benda sejauh 20 kaki selama 20 detik.";
-
-if ($umur < 2) {
-    $batas_aman = 5;
-    $kategori_umur = "Balita (Di bawah 2 tahun)";
-    $saran_kesehatan = "Sangat tidak disarankan terpapar layar selain untuk video call keluarga.";
-} elseif ($umur >= 2 && $umur <= 5) {
-    $batas_aman = 60;
-    $kategori_umur = "Anak-anak (2-5 tahun)";
-    $saran_kesehatan = "Maksimal 1 jam per hari. Pastikan konten bersifat edukatif.";
-}
-if ($durasi_menit <= $batas_aman) {
-    $warna_status = "text-success";
-    $pesan = "Kondisi Aman! Durasi Anda masih di bawah batas maksimal $kategori_umur.";
+if ($durasi_menit <= $batas_ideal) {
+    $persentase = 100;
 } else {
-    $warna_status = "text-danger";
-    $pesan = "Peringatan! Anda telah melebihi batas $batas_aman menit untuk $kategori_umur.";
-    $saran_kesehatan = "<b>Mata Anda lelah!</b> Segera istirahatkan mata minimal 15 menit dan lihat objek hijau di luar ruangan.";
+    $pengurangan = (($durasi_menit - $batas_ideal) / ($batas_maksimal - $batas_ideal)) * 100;
+    $persentase = max(0, round(100 - $pengurangan));
 }
+
+if ($durasi_menit <= 60) {
+    $kondisi_mata = "Sangat Baik";
+    $warna_status = "text-success";
+    $saran = "Mata Anda masih segar. Tetap jaga pola istirahat yang teratur.";
+} elseif ($durasi_menit <= 120) {
+    $kondisi_mata = "Normal";
+    $warna_status = "text-primary";
+    $saran = "Sudah cukup lama di depan layar. Cobalah melihat ke kejauhan sejenak.";
+} elseif ($durasi_menit <= 240) {
+    $kondisi_mata = "Lelah";
+    $warna_status = "text-warning";
+    $saran = "Mata mulai tegang. Segera istirahatkan mata Anda sekitar 15 menit.";
+} else {
+    $kondisi_mata = "Sangat Lelah";
+    $warna_status = "text-danger";
+    $saran = "Peringatan! Anda sudah melewati batas aman 4 jam. Segera berhenti menggunakan layar.";
+}
+$query_history = "INSERT INTO cek_mata_history (id_user, tanggal, kategori, saran) 
+                  VALUES ('$id_user', NOW(), '$kondisi_mata', '$saran')";
+mysqli_query($conn, $query_history);
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>EyeCare - Hasil Analisis</title>
-     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <title>EyeCare - Analisis Sesi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
-body {
-    font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #eef4ff, #f8fbff);
-}
-
-.result-card {
-    background: #ffffff;
-    padding: 45px;
-    border-radius: 25px;
-    box-shadow: 0 15px 40px rgba(16, 54, 125, 0.15);
-    margin-top: 60px;
-    text-align: center;
-    border: 2px solid #e3ecff;
-    transition: 0.3s;
-}
-
-.duration-display {
-    display: inline-block;
-    padding: 18px 45px;
-    border-radius: 50px;
-    font-size: 2.7rem;
-    font-weight: 700;
-    color: #10367d;
-    margin: 25px auto;
-    background: #eaf4ff;
-    border: 3px solid #74b4da;
-    letter-spacing: 2px;
-}
-
-.text-success {
-    color: #2ecc71 !important;
-    font-weight: 600;
-}
-
-.text-danger {
-    color: #e74c3c !important;
-    font-weight: 600;
-}
-
-.alert-info {
-    background-color: #eaf4ff;
-    border: none;
-    border-radius: 15px;
-    color: #10367d;
-}
-
-.btn-primary {
-    background-color: #10367d;
-    border: none;
-    border-radius: 12px;
-    transition: 0.3s;
-}
-
-.btn-primary:hover {
-    background-color: #74b4da;
-    color: #10367d;
-}
-
-.btn-outline-secondary {
-    border-radius: 12px;
-}
+        body { font-family: 'Poppins', sans-serif; background: #f4f7fe; }
+        .result-card {
+            background: #fff; padding: 40px; border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05); margin-top: 50px;
+            text-align: center; border: 1px solid #eef1f6;
+        }
+        .duration-circle {
+            width: 200px; height: 200px; border-radius: 50%;
+            border: 8px solid #eaf4ff; display: flex; align-items: center;
+            justify-content: center; margin: 20px auto; flex-direction: column;
+            background: #fff; box-shadow: inset 0 0 15px rgba(0,0,0,0.02);
+        }
+        .score-badge {
+            background: #10367d; color: white; padding: 5px 15px;
+            border-radius: 20px; font-size: 0.9rem; margin-bottom: 10px;
+        }
+        .btn-main { background: #10367d; color: white; border-radius: 12px; padding: 12px 25px; transition: 0.3s; text-decoration: none; display: inline-block; }
+        .btn-main:hover { background: #081d44; color: white; transform: translateY(-2px); }
+        .alert-custom { background: #f8fbff; border-left: 5px solid #10367d; border-radius: 15px; padding: 20px; text-align: left; }
     </style>
 </head>
 <body>
-
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-7 result-card">
-            <h2 class="mb-2">Hasil Monitoring Mata</h2>
-            <p class="text-muted">Kategori: <?= $kategori_umur ?></p>
-            <hr>
-            
-            <p class="mb-1">Total Durasi Penggunaan Layar:</p>
-            <div class="duration-display">
-                <?= $format_waktu ?>
+        <div class="col-md-6 result-card">
+            <span class="score-badge">Skor Sesi: <?= $persentase ?>%</span>
+            <h2 class="fw-bold" style="color: #10367d;">Analisis Layar</h2>
+            <div class="duration-circle">
+                <small class="text-muted">DURASI</small>
+                <h3 class="fw-bold mb-0" style="color: #10367d;"><?= $format_waktu ?></h3>
             </div>
-
-            <h3 class="<?= $warna_status ?> mt-4"><?= $pesan ?></h3>
-            
-            <div class="alert alert-info mt-4 text-start">
-                <strong>Saran Kesehatan:</strong><br>
-                <?= $saran_kesehatan ?>
+            <h4 class="<?= $warna_status ?> fw-bold mt-3"><?= $kondisi_mata ?></h4>
+            <div class="alert-custom mt-4">
+                <h6 class="fw-bold"><i class="bi bi-info-circle-fill me-2"></i>Rekomendasi Tindakan:</h6>
+                <p class="mb-0 text-muted"><?= $saran ?></p>
             </div>
-
-            <p class="text-muted small mt-3">Sumber: Kompas Tekno & Klinik Mata Utama (KMU)</p>
-
-            <div class="mt-4">
-                <a href="dashboard.php" class="btn btn-primary px-4 py-2">Kembali ke Dashboard</a>
-                <a href="riwayat.php" class="btn btn-outline-secondary px-4 py-2">Lihat Riwayat</a>
+            <div class="mt-4 d-flex gap-2 justify-content-center">
+                <a href="dashboard.php" class="btn-main">Selesai</a>
+                <a href="riwayat.php" class="btn btn-outline-secondary px-4" style="border-radius: 12px; padding: 11px;">Riwayat</a>
             </div>
         </div>
     </div>
 </div>
-
-<div class="container" id="footer">
-    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
-        
-        <div class="col-md-4 d-flex align-items-center">
-            <span class="mb-3 mb-md-0 text-body-secondary">© 2026 EyeCare, Inc</span>
-        </div>
-
-        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
-            <li class="ms-3">
-                <a class="text-body-secondary" href="#" aria-label="Instagram">
-                    <i class="bi bi-instagram fs-5"></i>
-                </a>
-            </li>
-            <li class="ms-3">
-                <a class="text-body-secondary" href="#" aria-label="Facebook">
-                    <i class="bi bi-facebook fs-5"></i>
-                </a>
-            </li>
-            <li class="ms-3">
-                <a class="text-body-secondary" href="#" aria-label="Twitter">
-                    <i class="bi bi-twitter-x fs-5"></i>
-                </a>
-            </li>
-        </ul>
-        
-    </footer>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 </html>

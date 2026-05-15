@@ -7,177 +7,162 @@ if (!isset($_SESSION['id'])) {
     exit();
 }
 
-$id = $_SESSION['id'];
+$id_user = (int)$_SESSION['id'];
 
-$query = mysqli_query($conn, "SELECT * FROM user WHERE id = $id");
+$query = mysqli_query($conn, "SELECT * FROM user WHERE id = $id_user");
 $data = mysqli_fetch_assoc($query);
 
 $success = false;
+$error = "";
 
 if (isset($_POST['update'])) {
-
     $nama = mysqli_real_escape_string($conn, $_POST['nama']);
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $tgl_lahir = $_POST['tgl_lahir'];
+    $foto = mysqli_real_escape_string($conn, $_POST['foto']);
 
-    mysqli_query($conn, "UPDATE user SET 
-        nama_lengkap = '$nama',
-        email = '$email',
-        tgl_lahir = '$tgl_lahir'
-        WHERE id = $id
-    ");
+    if (trim($nama) == "" || !preg_match("/[a-zA-Z]/", $nama)) {
+        $error = "Nama tidak valid!";
+    } else {
+        $update = mysqli_query($conn, "UPDATE user SET 
+            nama_lengkap = '$nama',
+            email = '$email',
+            tgl_lahir = '$tgl_lahir',
+            foto = '$foto'
+            WHERE id = $id_user");
 
-    $_SESSION['nama_lengkap'] = $nama;
-    $success = true;
+        if ($update) {
+            $_SESSION['nama_lengkap'] = $nama;
+            $_SESSION['foto'] = $foto;
+            $success = true;
+        } else {
+            $error = "Gagal update data.";
+        }
+    }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Edit Profile</title>
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-<style>
-body {
-    font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #eaf2ff, #f9fbff);
-}
-
-.card {
-    border: none;
-    border-radius: 25px;
-    background: rgba(255,255,255,0.9);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 20px 50px rgba(16,54,125,0.15);
-}
-
-.card-title {
-    font-weight: 700;
-    color: #10367d;
-}
-
-.form-control {
-    border-radius: 12px;
-    padding: 10px;
-    border: 1px solid #e0e6f5;
-}
-
-.form-control:focus {
-    border-color: #74b4da;
-    box-shadow: 0 0 0 0.2rem rgba(116,180,218,0.2);
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, #10367d, #74b4da);
-    border: none;
-    border-radius: 12px;
-}
-
-.btn-primary:hover {
-    transform: scale(1.03);
-}
-
-.btn-outline-secondary {
-    border-radius: 12px;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EyeCare - Edit Profil</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f4f7fe;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            max-width: 500px;
+            width: 100%;
+        }
+        .card-header {
+            background: #10367d;
+            padding: 20px;
+            text-align: center;
+            border-radius: 20px 20px 0 0 !important;
+        }
+        .card-header h4 {
+            color: white;
+            margin: 0;
+            font-weight: 600;
+        }
+        .photo-selector {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+        .photo-option {
+            position: relative;
+            cursor: pointer;
+        }
+        .photo-option input {
+            position: absolute;
+            opacity: 0;
+        }
+        .photo-preview {
+            width: 100%;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            transition: 0.2s;
+        }
+        .photo-option input:checked + .photo-preview {
+            border-color: #10367d;
+            transform: scale(1.05);
+        }
+        .btn-primary {
+            background: #10367d;
+            border: none;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .btn-back {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #666;
+            text-decoration: none;
+        }
+    </style>
 </head>
-
 <body>
-
-<div class="container py-5">
-<div class="row justify-content-center">
-<div class="col-md-6">
-
-<div class="card p-4">
-<div class="card-body">
-
-<h4 class="card-title text-center mb-4">Edit Profile</h4>
-
-<form method="POST">
-
-<div class="mb-3">
-<label class="form-label">Nama Lengkap</label>
-<input type="text" name="nama" class="form-control"
-value="<?= htmlspecialchars($data['nama_lengkap']) ?>" required>
+<div class="card">
+    <div class="card-header">
+        <h4>Edit Profil</h4>
+    </div>
+    <div class="card-body p-4">
+        <?php if($error): ?>
+            <div class="alert alert-danger"><?= $error ?></div>
+        <?php endif; ?>
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label">Nama Lengkap</label>
+                <input type="text" name="nama" class="form-control" value="<?= htmlspecialchars($data['nama_lengkap']) ?>" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($data['email']) ?>" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Tanggal Lahir</label>
+                <input type="date" name="tgl_lahir" class="form-control" value="<?= $data['tgl_lahir'] ?>" required>
+            </div>
+            <div class="mb-4">
+                <label class="form-label d-block">Pilih Foto</label>
+                <div class="photo-selector">
+                    <?php for($i=1; $i<=10; $i++): $img = "pict$i.jpg"; ?>
+                        <label class="photo-option">
+                            <input type="radio" name="foto" value="<?= $img ?>" <?= ($data['foto'] == $img) ? 'checked' : '' ?>>
+                            <img src="assets/<?= $img ?>" class="photo-preview" onerror="this.src='assets/pict1.jpg'">
+                        </label>
+                    <?php endfor; ?>
+                </div>
+            </div>
+            <button type="submit" name="update" class="btn btn-primary w-100">Simpan Perubahan</button>
+            <a href="profile.php" class="btn-back"><i class="bi bi-arrow-left"></i> Kembali</a>
+        </form>
+    </div>
 </div>
-
-<div class="mb-3">
-<label class="form-label">Email</label>
-<input type="email" name="email" class="form-control"
-value="<?= htmlspecialchars($data['email']) ?>" required>
-</div>
-
-<div class="mb-3">
-<label class="form-label">Tanggal Lahir</label>
-<input type="date" name="tgl_lahir" class="form-control"
-value="<?= $data['tgl_lahir'] ?>" required>
-</div>
-
-<button type="submit" name="update" class="btn btn-primary w-100">
-Simpan Perubahan
-</button>
-
-</form>
-
-<a href="dashboard.php" class="btn btn-outline-secondary w-100 mt-3">
-Kembali
-</a>
-
-</div>
-</div>
-
-</div>
-</div>
-</div>
-
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <?php if ($success): ?>
 <script>
-Swal.fire({
-    title: 'Berhasil!',
-    text: 'Profil berhasil diupdate',
-    icon: 'success',
-    confirmButtonColor: '#10367d'
-}).then(() => {
-    window.location.href = 'dashboard.php';
-});
+    Swal.fire({
+        title: 'Berhasil!',
+        text: 'Profil diperbarui',
+        icon: 'success'
+    }).then(() => { window.location.href = 'profile.php'; });
 </script>
 <?php endif; ?>
-
-<div class="container" id="footer">
-    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
-        
-        <div class="col-md-4 d-flex align-items-center">
-            <span class="mb-3 mb-md-0 text-body-secondary">© 2026 EyeCare, Inc</span>
-        </div>
-
-        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
-            <li class="ms-3">
-                <a class="text-body-secondary" href="#" aria-label="Instagram">
-                    <i class="bi bi-instagram fs-5"></i>
-                </a>
-            </li>
-            <li class="ms-3">
-                <a class="text-body-secondary" href="#" aria-label="Facebook">
-                    <i class="bi bi-facebook fs-5"></i>
-                </a>
-            </li>
-            <li class="ms-3">
-                <a class="text-body-secondary" href="#" aria-label="Twitter">
-                    <i class="bi bi-twitter-x fs-5"></i>
-                </a>
-            </li>
-        </ul>
-        
-    </footer>
-</div>
-
 </body>
 </html>

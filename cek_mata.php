@@ -1,17 +1,18 @@
 <?php
 session_start();
+include 'koneksi.php';
 
 if (!isset($_SESSION['id'])) {
     header("location: login.php");
     exit();
 }
 
+$id_user = $_SESSION['id'];
 $kategori = "";
 $hasil = "";
 $warna = "";
 
-if (isset($_POST['submit'])) {
-
+if(isset($_POST['submit'])) {
     $total = 0;
     foreach ($_POST['q'] as $jawaban) {
         $total += (int)$jawaban;
@@ -30,9 +31,12 @@ if (isset($_POST['submit'])) {
         $warna = "error";
         $hasil = "Mata kamu sudah sangat lelah. Segera istirahatkan mata 15-30 menit.";
     }
-}
-?>
 
+    $tgl_sekarang = date('Y-m-d H:i:s');
+    mysqli_query($conn, "INSERT INTO cek_mata_history (id_user, tanggal, kategori, saran) 
+                         VALUES ('$id_user', '$tgl_sekarang', '$kategori', '$hasil')");
+    }
+ ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
