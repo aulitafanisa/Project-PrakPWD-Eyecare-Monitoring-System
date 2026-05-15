@@ -3,8 +3,13 @@
     include 'koneksi.php';
 
     if($_SERVER['REQUEST_METHOD'] == 'POST'){
-        $username = $_POST['username'];
-        $password = $_POST['password'];
+        $username = trim($_POST['username']);
+        $password = trim($_POST['password']);
+
+        if(empty($username) || empty($password)){
+            echo "<script>alert('Username dan Password tidak boleh kosong!'); window.location='login.php';</script>";
+            exit();
+        }
 
         $sql = mysqli_query($conn, "SELECT * FROM user WHERE username = '$username' AND `password` = '$password'");
         if(mysqli_num_rows($sql) > 0){
