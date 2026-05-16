@@ -5,6 +5,7 @@
 oleh:
 
 Aulita Fanisa Ardila/124250067
+
 Charisya Prameswari Alviantika/124250068
 
 Program ini dibuat untuk membantu pengguna menjaga kesehatan mata dari risiko Computer Vision Syndrome (CVS) akibat paparan radiasi layar (screen time) yang berlebihan, dengan menerapkan sistem pelacakan waktu nyata dan kuesioner skrining kesehatan yang terintegrasi dengan basis data.
